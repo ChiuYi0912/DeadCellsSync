@@ -1,0 +1,37 @@
+# .NET build artifacts - anchored so every project's own bin/obj is ignored, never a
+# source directory that happens to share the name (there is none here, but keep the pattern
+# scoped rather than a bare top-level "bin"/"obj" as good practice).
+**/bin/
+**/obj/
+
+# Rider / VS / VS Code
+.idea/
+.vs/
+*.user
+.vscode/*
+!.vscode/extensions.json
+
+# Test/coverage output
+**/TestResults/
+coverage/
+*.trx
+
+# OS cruft
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Env / secrets (none required by this project, but keep the door shut)
+.env
+.env.*
+!.env.example
+
+# Misc dependency/package caches that don't belong in a solo .NET repo but are common enough
+# to be worth excluding defensively
+node_modules/
+__pycache__/
+*.duckdb
+dbt_packages/
