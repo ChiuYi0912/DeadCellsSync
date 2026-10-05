@@ -75,42 +75,32 @@ dotnet build
 dotnet test
 ```
 
-Run the local synchronization demo (no real network):
+Run the movement interpolation teaching demo (no real network):
 
 ```bash
 dotnet run --project src/DeadCellsSync.Demo
 ```
 
-The demo drives a scripted "remote hero" through the full pipeline — authoritative simulation →
-snapshot → simulated latency/jitter/loss → interpolation buffer → rendered position — and prints a
-table comparing the authoritative position against the interpolated render position so smoothing is
-directly observable:
+The demo prints a per-frame timeline (render time, previous/next snapshot, alpha, server vs render
+position) so you can watch a remote player's position go from discrete server snapshots to a smooth
+interpolated render. A full walkthrough — what a snapshot is, why render time lags, how alpha is
+computed — lives in [src/DeadCellsSync.Demo/README.md](src/DeadCellsSync.Demo/README.md).
 
 ```
- tick | serverA.X | renderA.X | |delta|
-------+-----------+-----------+--------
-  6.0 |    -2.844 |    -3.701 |  0.858
-  6.5 |    -2.844 |    -3.602 |  0.759
-  7.0 |    -2.667 |    -3.505 |  0.837
+ renderT | serverT |  prevT |  nextT | alpha | serverX |  prevX |  nextX | renderX | serverV | renderV
+---------+---------+--------+--------+-------+---------+--------+--------+---------+---------+---------
+  0.050 |   0.133 |  0.000 |  0.100 |  0.50 |    1.33 |   0.00 |   1.00 |    0.50 |   10.00 |   10.00
+  0.067 |   0.167 |  0.000 |  0.100 |  0.67 |    1.67 |   0.00 |   1.00 |    0.67 |   10.00 |   10.00
 ```
 
-Tune the conditions with flags (all optional):
+Tune the scenario, speed, and network conditions with flags (all optional):
 
 ```bash
 dotnet run --project src/DeadCellsSync.Demo -- \
-  --latency 3 --jitter 2 --loss 0.2 --snapshot-hz 20 \
-  --interpolation-delay-ms 150 --seconds 5 --seed 42
+  --scenario reversal --velocity 10 \
+  --latency 3 --jitter 2 --loss 0.2 \
+  --snapshot-every 3 --interpolation-delay-ms 100 --seconds 1
 ```
-
-| flag | default | meaning |
-|------|---------|---------|
-| `--latency` | 2 | fixed latency, in simulation ticks (30 ticks/sec) |
-| `--jitter` | 1 | additional random latency, in ticks |
-| `--loss` | 0.1 | packet loss probability |
-| `--snapshot-hz` | 20 | target snapshot broadcast rate |
-| `--interpolation-delay-ms` | 150 | render delay applied by the interpolation buffer |
-| `--seconds` | 5 | demo duration |
-| `--seed` | 1234 | RNG seed (deterministic runs) |
 
 ## Testing approach
 
