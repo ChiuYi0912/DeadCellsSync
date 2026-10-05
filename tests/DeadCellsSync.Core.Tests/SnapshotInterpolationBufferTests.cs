@@ -135,4 +135,35 @@ public class SnapshotInterpolationBufferTests
         var betweenLastTwo = buffer.Sample(20f * SimulationConfig.FixedDeltaTime);
         Approx.Equal(20f, betweenLastTwo.Position.X, 0.01f);
     }
+
+    [Fact]
+    public void GetInterpolationSample_ReturnsBracketingSnapshotsAndAlpha()
+    {
+        var buffer = new SnapshotInterpolationBuffer(interpolationDelaySeconds: 0f);
+        buffer.AddSnapshot(0, StateAt(0f));
+        buffer.AddSnapshot(10, StateAt(10f));
+
+        var sample = buffer.GetInterpolationSample(5f * SimulationConfig.FixedDeltaTime);
+
+        Assert.Equal(0u, sample.PreviousTick);
+        Assert.Equal(10u, sample.NextTick);
+        Approx.Equal(0.5f, sample.Alpha, 0.001f);
+        Approx.Equal(0f, sample.PreviousState.Position.X, 0.001f);
+        Approx.Equal(10f, sample.NextState.Position.X, 0.001f);
+    }
+
+    [Fact]
+    public void GetInterpolationSample_PastLastSnapshot_HoldsLast()
+    {
+        var buffer = new SnapshotInterpolationBuffer(interpolationDelaySeconds: 0f);
+        buffer.AddSnapshot(0, StateAt(0f));
+        buffer.AddSnapshot(10, StateAt(10f));
+
+        var sample = buffer.GetInterpolationSample(1000f * SimulationConfig.FixedDeltaTime);
+
+        Assert.Equal(10u, sample.PreviousTick);
+        Assert.Equal(10u, sample.NextTick);
+        Approx.Equal(0f, sample.Alpha, 0.001f);
+        Approx.Equal(10f, sample.NextState.Position.X, 0.001f);
+    }
 }

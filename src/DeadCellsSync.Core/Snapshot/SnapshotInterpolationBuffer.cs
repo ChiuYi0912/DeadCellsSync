@@ -93,6 +93,45 @@ public sealed class SnapshotInterpolationBuffer
         return last.state;
     }
 
+    /// <summary>
+    /// Read-only mirror of <see cref="Sample"/>: returns the two buffered snapshots that bracket
+    /// the render time for <paramref name="localTimeSeconds"/> plus the interpolation alpha
+    /// between them, without pruning. Intended for teaching/debugging the interpolation timeline
+    /// (previous/next snapshot + alpha); <see cref="Sample"/> remains the way to get the final
+    /// interpolated state.
+    /// </summary>
+    public InterpolationSample GetInterpolationSample(float localTimeSeconds)
+    {
+        if (_buffer.Count == 0)
+        {
+            throw new InvalidOperationException("Cannot sample an empty interpolation buffer.");
+        }
+
+        var renderTick = (localTimeSeconds - _interpolationDelaySeconds) / SimulationConfig.FixedDeltaTime;
+
+        if (renderTick <= _buffer[0].tick)
+        {
+            return new InterpolationSample(
+                _buffer[0].tick, _buffer[0].tick, _buffer[0].state, _buffer[0].state, 0f);
+        }
+
+        for (var i = 0; i < _buffer.Count - 1; i++)
+        {
+            var (tickA, stateA) = _buffer[i];
+            var (tickB, stateB) = _buffer[i + 1];
+
+            if (renderTick >= tickA && renderTick <= tickB)
+            {
+                var alpha = tickB == tickA ? 0f : (renderTick - tickA) / (tickB - tickA);
+                return new InterpolationSample(tickA, tickB, stateA, stateB, alpha);
+            }
+        }
+
+        // Render time is ahead of every snapshot (buffer underrun): hold the last known one.
+        var last = _buffer[^1];
+        return new InterpolationSample(last.tick, last.tick, last.state, last.state, 0f);
+    }
+
     private void PruneBefore(int keepFromIndex)
     {
         if (keepFromIndex <= 0)
@@ -112,3 +151,15 @@ public sealed class SnapshotInterpolationBuffer
         return new PlayerState(position, velocity, health, cooldown, b.LastProcessedInputSequence);
     }
 }
+
+/// <summary>
+/// The two buffered snapshots that bracket a render time, plus the interpolation alpha between
+/// them. Produced by <see cref="SnapshotInterpolationBuffer.GetInterpolationSample"/> for
+/// teaching/debugging the interpolation timeline.
+/// </summary>
+public readonly record struct InterpolationSample(
+    uint PreviousTick,
+    uint NextTick,
+    PlayerState PreviousState,
+    PlayerState NextState,
+    float Alpha);
