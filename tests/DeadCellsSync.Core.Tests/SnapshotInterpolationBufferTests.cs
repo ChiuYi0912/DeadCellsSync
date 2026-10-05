@@ -90,4 +90,49 @@ public class SnapshotInterpolationBufferTests
 
         Assert.True(sampled.Position.X < 10f);
     }
+
+    [Fact]
+    public void Sample_InterpolatesVelocityBetweenTwoSnapshots()
+    {
+        var buffer = new SnapshotInterpolationBuffer(interpolationDelaySeconds: 0f);
+        var a = new PlayerState(new Vector2F(0f, 0f), Vector2F.Zero, SimulationConfig.MaxHealth, 0f, 0);
+        var b = new PlayerState(new Vector2F(10f, 0f), new Vector2F(10f, 0f), SimulationConfig.MaxHealth, 0f, 0);
+        buffer.AddSnapshot(0, a);
+        buffer.AddSnapshot(10, b);
+
+        var sampled = buffer.Sample(5f * SimulationConfig.FixedDeltaTime);
+
+        Approx.Equal(5f, sampled.Velocity.X, 0.01f);
+        Approx.Equal(0f, sampled.Velocity.Y, 0.01f);
+    }
+
+    [Fact]
+    public void Sample_InterpolatesHealthAndCooldown()
+    {
+        var buffer = new SnapshotInterpolationBuffer(interpolationDelaySeconds: 0f);
+        var a = new PlayerState(new Vector2F(0f, 0f), Vector2F.Zero, 100f, 0f, 0);
+        var b = new PlayerState(new Vector2F(10f, 0f), Vector2F.Zero, 50f, 1f, 5);
+        buffer.AddSnapshot(0, a);
+        buffer.AddSnapshot(10, b);
+
+        var sampled = buffer.Sample(5f * SimulationConfig.FixedDeltaTime);
+
+        Approx.Equal(75f, sampled.Health, 0.01f);
+        Approx.Equal(0.5f, sampled.FireCooldownRemaining, 0.01f);
+    }
+
+    [Fact]
+    public void AddSnapshot_UnstableIntervals_InterpolatesCorrectly()
+    {
+        var buffer = new SnapshotInterpolationBuffer(interpolationDelaySeconds: 0f);
+        buffer.AddSnapshot(0, StateAt(0f));
+        buffer.AddSnapshot(12, StateAt(12f));
+        buffer.AddSnapshot(25, StateAt(25f));
+
+        var betweenFirstTwo = buffer.Sample(6f * SimulationConfig.FixedDeltaTime);
+        Approx.Equal(6f, betweenFirstTwo.Position.X, 0.01f);
+
+        var betweenLastTwo = buffer.Sample(20f * SimulationConfig.FixedDeltaTime);
+        Approx.Equal(20f, betweenLastTwo.Position.X, 0.01f);
+    }
 }
