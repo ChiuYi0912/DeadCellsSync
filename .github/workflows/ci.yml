@@ -27,16 +27,3 @@ jobs:
 
       - name: "Test (offline: no network, no Docker, no Unity)"
         run: dotnet test tests/NetcodeArena.Core.Tests/NetcodeArena.Core.Tests.csproj --no-build --configuration Release --logger "console;verbosity=normal"
-
-  docker-build:
-    name: "Docker build (headless server image)"
-    runs-on: ubuntu-latest
-    # Informational only - proves the Dockerfile is valid without gating the required unit
-    # tests above on a Docker daemon (which offline dev environments may not have running).
-    continue-on-error: true
-    steps:
-      - name: "Checkout"
-        uses: actions/checkout@v4
-
-      - name: "Build server image"
-        run: docker build -t netcode-arena-server:ci .

@@ -13,7 +13,6 @@ Most solo game-dev portfolios that claim "multiplayer" are naive state sync: sen
 - **Client-side prediction** — the local player moves instantly on input, before any server round trip.
 - **Server reconciliation** — when an authoritative snapshot arrives, the client rewinds to it and replays any inputs the server hasn't acknowledged yet, so prediction errors self-correct instead of accumulating.
 - **Snapshot interpolation** — the remote player is rendered by interpolating between two buffered server snapshots on a small delay, which absorbs jitter without ever guessing (extrapolating) through a wall.
-- **A headless, Dockerized dedicated server** — the authoritative simulation runs standalone over UDP, with no game engine required to host a match.
 
 ## How it works
 
@@ -46,15 +45,13 @@ The predict → send → reconcile loop runs for the **local** player; the same 
 **Design decisions worth knowing:**
 - The client predicts its own movement and weapon cooldown for instant feedback, but never predicts *damage* — health only changes when an authoritative snapshot says so, exactly like how competitive shooters treat hit confirmation as server-only truth.
 - If a player's input queue runs dry (loss/latency spike), the server holds that player in place rather than extrapolating them through geometry — the same "don't guess past what you know" philosophy used by the interpolation buffer on the render side.
-- The `NetcodeArena.Server` process is a small real UDP host (see `HeadlessHost`/`WireCodec`) that runs the fixed-tick authoritative loop and broadcasts snapshots — enough to prove the core simulation is genuinely playable over a network, not just testable in memory.
 
 ### Scope note: the Unity layer is intentionally thin/optional
 
-This repo is engine-agnostic by design — `NetcodeArena.Core` has no Unity, no `MonoBehaviour`, no engine types anywhere. A Unity (or any engine) front end would be a thin presentation layer: read local input, call `ClientPredictor`, render `SnapshotInterpolationBuffer` output, and talk to the headless server over UDP using the same wire format as `NetcodeArena.Server`. That presentation layer is **not built** in this repo (Unity isn't part of the build/test toolchain here) — the deliverable is the hard part: a correct, tested prediction/reconciliation/interpolation core plus a working headless server.
+This repo is engine-agnostic by design — `NetcodeArena.Core` has no Unity, no `MonoBehaviour`, no engine types anywhere. A Unity (or any engine) front end would be a thin presentation layer: read local input, call `ClientPredictor`, render `SnapshotInterpolationBuffer` output. That presentation layer is **not built** in this repo (Unity isn't part of the build/test toolchain here) — the deliverable is the hard part: a correct, tested prediction/reconciliation/interpolation core.
 
 **Documented stretch goals (designed, not implemented):**
 - Lag-compensated hit detection (rewinding the target to where the shooter saw them, not where they are now).
-- Real matchmaking/session management (this server assigns the first two UDP endpoints it sees to a single match; no queueing, no lobbies, no more than one match per process).
 
 ## Quick start
 
@@ -69,27 +66,12 @@ dotnet build
 dotnet test
 ```
 
-Run the headless dedicated server locally (optional; not required for tests):
-
-```bash
-dotnet run --project src/NetcodeArena.Server -- 7777
-```
-
-Or build/run it in Docker:
-
-```bash
-docker build -t netcode-arena-server .
-docker run --rm -p 7777:7777/udp netcode-arena-server
-```
-
 ## Project layout
 
 ```
 src/NetcodeArena.Core/       Pure C# simulation: movement, weapon, prediction, reconciliation,
                               snapshot interpolation, and a deterministic simulated network
                               channel used by the test suite to inject latency/loss.
-src/NetcodeArena.Server/     Headless UDP dedicated server (HeadlessHost) that runs the fixed-
-                              tick authoritative loop and broadcasts snapshots.
 tests/NetcodeArena.Core.Tests/  xUnit suite - runs fully offline, no Unity/Docker/network.
 ```
 
