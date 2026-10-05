@@ -17,4 +17,12 @@ public static class Approx
             difference <= epsilon,
             $"Expected {actual} to be within {epsilon} of {expected}, but differed by {difference}.");
     }
+
+    public static void Equal(double expected, double actual, double epsilon = 0.001)
+    {
+        var difference = Math.Abs(expected - actual);
+        Assert.True(
+            difference <= epsilon,
+            $"Expected {actual} to be within {epsilon} of {expected}, but differed by {difference}.");
+    }
 }
