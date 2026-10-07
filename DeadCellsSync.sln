@@ -9,10 +9,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DeadCellsSync.Core", "src\D
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{5534B899-CDCA-4908-85F4-F739E0708A2A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DeadCellsSync.Core.Tests", "tests\DeadCellsSync.Core.Tests\DeadCellsSync.Core.Tests.csproj", "{EB752AA1-0F45-4716-AF5D-091E68091BAB}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DeadCellsSync.Demo", "src\DeadCellsSync.Demo\DeadCellsSync.Demo.csproj", "{4FCDBD1E-B6D1-487C-8132-FEB11BBD2EDF}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -35,37 +31,11 @@ Global
 		{1828BF57-2085-4AC1-A5F5-7AB671AF3B8E}.Release|x64.Build.0 = Release|Any CPU
 		{1828BF57-2085-4AC1-A5F5-7AB671AF3B8E}.Release|x86.ActiveCfg = Release|Any CPU
 		{1828BF57-2085-4AC1-A5F5-7AB671AF3B8E}.Release|x86.Build.0 = Release|Any CPU
-		{EB752AA1-0F45-4716-AF5D-091E68091BAB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{EB752AA1-0F45-4716-AF5D-091E68091BAB}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{EB752AA1-0F45-4716-AF5D-091E68091BAB}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{EB752AA1-0F45-4716-AF5D-091E68091BAB}.Debug|x64.Build.0 = Debug|Any CPU
-		{EB752AA1-0F45-4716-AF5D-091E68091BAB}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{EB752AA1-0F45-4716-AF5D-091E68091BAB}.Debug|x86.Build.0 = Debug|Any CPU
-		{EB752AA1-0F45-4716-AF5D-091E68091BAB}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{EB752AA1-0F45-4716-AF5D-091E68091BAB}.Release|Any CPU.Build.0 = Release|Any CPU
-		{EB752AA1-0F45-4716-AF5D-091E68091BAB}.Release|x64.ActiveCfg = Release|Any CPU
-		{EB752AA1-0F45-4716-AF5D-091E68091BAB}.Release|x64.Build.0 = Release|Any CPU
-		{EB752AA1-0F45-4716-AF5D-091E68091BAB}.Release|x86.ActiveCfg = Release|Any CPU
-		{EB752AA1-0F45-4716-AF5D-091E68091BAB}.Release|x86.Build.0 = Release|Any CPU
-		{4FCDBD1E-B6D1-487C-8132-FEB11BBD2EDF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{4FCDBD1E-B6D1-487C-8132-FEB11BBD2EDF}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{4FCDBD1E-B6D1-487C-8132-FEB11BBD2EDF}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{4FCDBD1E-B6D1-487C-8132-FEB11BBD2EDF}.Debug|x64.Build.0 = Debug|Any CPU
-		{4FCDBD1E-B6D1-487C-8132-FEB11BBD2EDF}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{4FCDBD1E-B6D1-487C-8132-FEB11BBD2EDF}.Debug|x86.Build.0 = Debug|Any CPU
-		{4FCDBD1E-B6D1-487C-8132-FEB11BBD2EDF}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{4FCDBD1E-B6D1-487C-8132-FEB11BBD2EDF}.Release|Any CPU.Build.0 = Release|Any CPU
-		{4FCDBD1E-B6D1-487C-8132-FEB11BBD2EDF}.Release|x64.ActiveCfg = Release|Any CPU
-		{4FCDBD1E-B6D1-487C-8132-FEB11BBD2EDF}.Release|x64.Build.0 = Release|Any CPU
-		{4FCDBD1E-B6D1-487C-8132-FEB11BBD2EDF}.Release|x86.ActiveCfg = Release|Any CPU
-		{4FCDBD1E-B6D1-487C-8132-FEB11BBD2EDF}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{1828BF57-2085-4AC1-A5F5-7AB671AF3B8E} = {7215E69C-1038-460B-A739-AD1F5E361420}
-		{EB752AA1-0F45-4716-AF5D-091E68091BAB} = {5534B899-CDCA-4908-85F4-F739E0708A2A}
-		{4FCDBD1E-B6D1-487C-8132-FEB11BBD2EDF} = {7215E69C-1038-460B-A739-AD1F5E361420}
 	EndGlobalSection
 EndGlobal
